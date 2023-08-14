@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\mian.obj" 
+TO ".\Objects\红外循迹小车" 
+PRINT(".\Listings\红外循迹小车.m51") RAMSIZE(256) 

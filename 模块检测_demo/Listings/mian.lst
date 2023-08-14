@@ -1,0 +1,58 @@
+C51 COMPILER V9.57.0.0   MIAN                                                              08/14/2023 21:35:05 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MIAN
+OBJECT MODULE PLACED IN .\Objects\mian.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE mian.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mian
+                    -.lst) OBJECT(.\Objects\mian.obj)
+
+line level    source
+
+   1          #include <reg52.h>
+   2          sbit IN1=P0^1;
+   3          sbit IN2=P0^2; //定义小车驱动模块输入IO口 
+   4          sbit ENA=P0^0; //定义小车驱动模块使能端 
+   5          sbit X1=P1^0;//定义循迹
+   6          sbit LED=P3^4;//定义LED小灯
+   7          void dianji1()   //正转 IN1 1   IN2 0
+   8          {
+   9   1                      IN1=1;
+  10   1                      IN2=0;
+  11   1      }
+  12          
+  13          void dianji2()   //反转 IN1 1   IN2 1
+  14          {
+  15   1                      IN1=0;
+  16   1                      IN2=1;
+  17   1      }
+  18          
+  19          void main()
+  20          {
+  21   1              while(1)
+  22   1              {       
+  23   2                      if(X1==0)  //黑线 低电平
+  24   2                      {
+  25   3                              LED=1;
+  26   3                              dianji1();
+  27   3                      }
+  28   2                      else if(X1==1)
+  29   2                      {
+  30   3                              LED=0;
+  31   3                              dianji2();
+  32   3                      }
+  33   2        }
+  34   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     30    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

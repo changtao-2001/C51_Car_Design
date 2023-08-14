@@ -1,0 +1,336 @@
+2023.4.3 19：05
+#include <STC89C5xRC.H>
+#define uint unsigned int
+#define uchar unsigned char
+
+
+/*****引脚连接及定义*****/
+unsigned char PWMFA,PWMFB, PWMBA,PWMBB;
+
+
+//PWM调速//	//左侧前后顺序无所谓，重点检查左右是否接反
+
+sbit FENA = P2 ^ 0;			//前左轮PWM输入
+sbit FENB = P2 ^ 5;			//前右轮PWM输入
+
+sbit BENA = P0 ^ 5;			//后左轮PWM输入
+sbit BENB = P0 ^ 0;			//后右轮PWM输入
+
+//前电机驱动模块 F //	
+sbit FIN1 = P2 ^ 2;			//前左轮
+sbit FIN2 = P2 ^ 1;
+sbit FIN3 = P2 ^ 4;			//前右轮
+sbit FIN4 = P2 ^ 3;
+
+//后电机驱动模块 B //
+sbit BIN1 = P0 ^ 3;			//后左轮
+sbit BIN2 = P0 ^ 4;
+sbit BIN3 = P0 ^ 1;			//后右轮
+sbit BIN4 = P0 ^ 2;
+
+//五路循迹模块，对应自左至右五路循迹，检测到黑色输出高电平//
+sbit D1 = P1 ^ 4;
+sbit D2 = P1 ^ 3;
+sbit D3 = P1 ^ 2;
+sbit D4 = P1 ^ 1;
+sbit D5 = P1 ^ 0;
+
+/*****小车前进*****/
+void forward() 
+{
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA = 40;    //前左轮40%速度输出
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB =40;			//前右轮40%速度输出
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA = 40;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 40;			
+}
+
+	
+
+/*****小车左转弯一档*****/
+
+void turnleftA()
+ {
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB = 30;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 30;			
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA =30;
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA =30;				//左侧低速度输出
+}
+/*****小车左转弯二档*****/
+
+void turnleftB()
+ {
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB = 20;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 20;			
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA = 20;
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA = 20;				//左侧低速度输出
+ }
+ /*****小车左转弯三档*****/
+ 
+void turnleftC()
+{
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB = 30;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 30;			
+	FIN1 = 0;			//前左轮正转
+	FIN2 = 1;
+	PWMFA = 30;
+	BIN1 = 0;			//后左轮正转
+	BIN2 = 1;
+	PWMBA = 30
+	 ;				//左侧低速度输出
+}
+/*****小车左转弯四档*****/
+void turnleftD()
+{
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB = 40;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 40;			
+	FIN1 = 0;			//前左轮反转
+	FIN2 = 1;
+	PWMFA = 40;
+	BIN1 = 0;			//后左轮反转
+	BIN2 = 1;
+	PWMBA = 40;				//左侧低速度输出
+}
+
+
+/*****小车右转弯一档*****/
+
+void turnrightA()
+ {
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA = 30;
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA = 30;			
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB = 30;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 30;				//右侧低速度输出
+}
+/*****小车右转弯二档*****/
+void turnrightB()
+ {
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA = 20;
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA = 20;			
+	FIN3 = 1;			//前右轮正转
+	FIN4 = 0;
+	PWMFB = 20;
+	BIN3 = 1;			//后右轮正转
+	BIN4 = 0;
+	PWMBB = 20;				//右侧低速度输出
+}
+
+
+/*****小车右转弯三档*****/
+
+void turnrightC()
+ {
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA = 30;
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA = 30;			
+	FIN3 = 0;			//前右轮正转
+	FIN4 = 1;
+	PWMFB = 30;
+	BIN3 = 0;			//后右轮正转
+	BIN4 = 1;
+	PWMBB = 30;				//右侧低速度输出
+}
+
+void turnrightD()
+ {
+	FIN1 = 1;			//前左轮正转
+	FIN2 = 0;
+	PWMFA = 40;
+	BIN1 = 1;			//后左轮正转
+	BIN2 = 0;
+	PWMBA = 40;			
+	FIN3 = 0;			//前右轮反转
+	FIN4 = 1;
+	PWMFB = 40;
+	BIN3 = 0;			//后右轮反转
+	BIN4 = 1;
+	PWMBB = 40;				//右侧低速度输出
+}
+
+
+/*****延时函数(不需要修改）*****/
+void delay(uchar time) {
+	int i, j;
+	for (i = 0; i < time; i++)
+		for (j = 845; j > 0; j--);		//time=1时，延时10us
+}
+
+/*****五路循迹函数*****/
+void follow_black() 
+{
+	if (D1 == 1 && D2 == 1 && D3 == 0 && D4 == 1 && D5 == 1) 
+	{	//D3检测到黑线前进
+		
+		forward();
+	}
+	if (D1 == 1 && D2 == 1 && D3 == 0 && D4 == 0 && D5 == 1) 
+	{	//D3D4检测到黑线前进
+		turnrightA();
+	}
+	if (D1 == 1 && D2 == 1 && D3 == 1 && D4 == 0 && D5 == 1) 
+	{	//D4检测到黑线前进
+		turnrightB();
+	}
+	if (D1 == 1 && D2 == 1 && D3 == 1 && D4 == 0 && D5 == 0) 
+	{	//D4D5检测到黑线前进
+		turnrightC();
+	}
+	if (D1 == 1 && D2 == 1 && D3 == 1 && D4 == 1 && D5 == 0) 
+	{	//D5检测到黑线前进
+		turnrightD();
+	}
+	if (D1 == 1 && D2 == 0 && D3 == 0 && D4 == 1 && D5 == 1) 
+	{	//D2D3检测到黑线前进
+		turnleftA();
+	}
+	if (D1 == 1 && D2 == 0 && D3 == 1 && D4 == 1 && D5 == 1) 
+	{	//D2检测到黑线前进
+		turnleftB();
+	}
+	
+	if (D1 == 0 && D2 == 0 && D3 == 1 && D4 == 1 && D5 == 1) 
+	{	//D1D2检测到黑线 左转弯一档
+		turnleftC();
+	}
+	
+	if (D1 == 0 && D2 == 1 && D3 == 1 && D4 == 1 && D5 == 1) 
+	{	//D1检测到黑线 左转弯一档
+		turnleftD();
+	}
+	
+	if (D1 == 0 && D2 == 0 && D3 == 0 && D4 == 0 && D5 == 0) 
+	{
+		//全部检测到白板，即跑出赛道，执行上一个程序
+	}
+	
+		
+	if (D1 == 1 && D2 == 1 && D3 == 1 && D4 == 1 && D5 == 1) 
+	{
+	//全部检测到黑线，执行上一个程序
+	}
+/*****在下面根据情况来添加*****/
+
+}
+    
+
+
+
+
+/*****主函数（不需修改）*****/
+void main() 
+{
+	/*****控制定时器0来输出占空比控制电机速度*****/
+	TMOD = 0X12;	//定时器0和1的工作方式1 ，输出pwm方波信号
+	TH0 = 220;		//设置定时初值，0.01ms
+	TL0 = 220;		//设置定时初值
+	TF0 = 0;			//清楚TF0标志
+	EA = 1;				//开总中断
+	ET0 = 1;			//开定时器0中断
+	TR0 = 1;			//启动定时器0
+	delay(5);
+	while (1) 
+	{
+		follow_black();
+	}
+}
+
+/*****PWM产生程序（不需修改）*****/
+void make_PWM()interrupt 1 
+{	
+	unsigned char i, j , m ,n ;
+
+	TL0 = 0x9c;		//设置定时初始值 156
+	TH0 = 0xff;		//设置定时初始值 256
+	i++;
+	j++;
+	m++;
+	n++;
+	if (i < PWMFA) 
+	{
+		FENA = 1;
+	} else {
+		FENA = 0;
+		if (i >= 100) 
+			{
+			i = 0;
+		  }
+	}
+	if (j < PWMFB) 
+	{
+		FENB = 1;
+	} else {
+		FENB = 0;
+		if (j >= 100) 
+			{
+			j = 0;
+			}
+	}
+	if (m < PWMBA) 
+	{
+		BENA = 1;
+	} else {
+		BENA = 0;
+		if (m >= 100) 
+			{
+			m = 0;
+		  }
+	}
+	if (n < PWMBB) 
+	{
+		BENB = 1;
+	} else {
+		BENB = 0;
+		if (n >= 100) 
+			{
+			n = 0;
+			}
+	}
+      
+}
+
